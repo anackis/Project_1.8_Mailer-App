@@ -56,10 +56,7 @@ app.listen(3000, function() {
 
 
 
-// api key 
-// 26d8ce00606059f75a3bf961e8150de0-us13
-// list id 
-// bd928c4dce
+
 
 
 
