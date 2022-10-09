@@ -5,6 +5,10 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const request = require("request");
 const app = express();
+const https = require("https");
+const mailchimp = require("@mailchimp/mailchimp_marketing");
+const client = require("@mailchimp/mailchimp_marketing");
+
 
 
 // helped with problem of style.css error text/html 
@@ -13,30 +17,46 @@ app.use(express.static(__dirname + '/'));
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({extended: true}));
 
+
 app.post("/", function(req, res) {
+	client.setConfig({apiKey: "26d8ce00606059f75a3bf961e8150de0-us13",  server: "us13",});
+	const subscribingUser = {firstName: req.body.fName, lastName: req.body.lName, email: req.body.email};
+	
+	
 
-	const firstName = req.body.fName ;
-	const lastName = req.body.lName  ;
-	const	email = req.body.email ;
 
-	// js object 
-	const data = {
-		members: [
-			{
-				email_address: email,
-				status: "suscribed",
-				merge_fields: {
-					FNAME:  firstName,
-					LNAME: lastName
-				}
-			}
-		]
+	const run = async () => {
+		const response = await client.lists.addListMember("bd928c4dce", {
+			email_address: subscribingUser.email,
+			status: "subscribed",
+			merge_fields: {
+				FNAME: subscribingUser.firstName,
+				LNAME: subscribingUser.lastName
+        	}
+		});
+
+		res.sendFile(__dirname + "/success.html");
+
+		
+
+		console.log(response.status)
+		// console.log(response);
+
+		
 	};
 
-	// converting js to json 
-	const jsonData = JSON.stringify(data);
+	run();
+	
+	
+		
+	
+
 
 });
+
+
+
+
 
 
 app.get("/", function(req, res) {
